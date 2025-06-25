@@ -11,7 +11,7 @@ public class APIResponseDto {
 
     public APIResponseDto(EmployeeDto employee, DepartmentDto department) {
         this.employee = employee;
-        this.departmentDto = department;
+        this.department = department;
     }
 
     public EmployeeDto getEmployee() {
@@ -27,6 +27,6 @@ public class APIResponseDto {
     }
 
     public void setDepartmentDto(DepartmentDto department) {
-        this.departmentDto = department;
+        this.department = department;
     }
 }

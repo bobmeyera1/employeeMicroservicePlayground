@@ -7,10 +7,7 @@ import com.bobby.employee_service.dto.EmployeeDto;
 import com.bobby.employee_service.entity.Employee;
 import com.bobby.employee_service.repository.EmployeeRepository;
 import com.bobby.employee_service.service.EmployeeService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Optional;
 
@@ -19,11 +16,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    private WebClient webClient;
+    private final APIClient apiClient;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, WebClient webClient) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, APIClient apiClient) {
         this.employeeRepository = employeeRepository;
-        this.webClient = webClient;
+        this.apiClient = apiClient;
     }
 
     @Override
@@ -37,12 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Optional<Employee> result = this.employeeRepository.findByEmail(email);
         if (result.isPresent()) {
             Employee employee = result.get();
-
-            DepartmentDto departmentDto = this.webClient.get()
-                    .uri("http://localhost:8080/api/departments/code/"+ employee.getDepartmentCode())
-                    .retrieve()
-                    .bodyToMono(DepartmentDto.class)
-                    .block();
+            DepartmentDto departmentDto = apiClient.getDepartmentByCode(employee.getDepartmentCode());
             APIResponseDto response = new APIResponseDto(EmployeeAdaptor.toDto(employee), departmentDto);
             return Optional.of(response);
         } else {
